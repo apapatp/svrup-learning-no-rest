@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="{{comment.get_origin}}">Go Back</a>
+  <section>
+    <div class="">
+        {{comment.get_comment}} via <small>{{comment.user}}</small> </br>
+        {% if not comment.is_child %}
+          <ul>
+            {% for child in comment.get_children %}
+              <li class="" style="padding-left: 20px;">
+                {{child.get_comment}} via <small>{{child.user}}</small>
+              </li>
+            {% endfor%}
+          </ul>
+          <div class="reply_comment" style="">
+            <form class="" action="{% url 'comment_create_view' %}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="move_id" value="">
+              <input type="hidden" name="parent_id" value="{{comment.id}}">
+              <input type="hidden" name="origin_path" value="{{request.get_full_path}}">
+              {{form.as_p}}
+              <input type="submit" name="reply" value="Reply">
+            </form>
+          </div>
+        {% endif %}
+      </div>
+  </section>
+{% endblock %}

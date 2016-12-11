@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+<!-- load template filter for crispy form. Crispy form makes look better. used as filter-->
+{% load crispy_forms_tags %}
+
+{% block content %}
+  This is move detail specific {# move.get_absolute_url #}
+  share this: {{move.get_share_message | safe}}
+  <br/>
+  <br/>
+  <!-- tags -->
+  {% if move.tags %}
+  <ul>
+    {% for tag in move.tags.all %}
+      <li>{{tag}}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  <br/>
+  <br/>
+
+  {% if move.get_previous_url %}
+    <a href="{{move.get_previous_url}}">Previous</a>
+  {% endif %}
+
+  {% if move.get_next_url %}
+    <a href="{{move.get_next_url}}">Next</a>
+  {% endif %}
+
+  <br/>
+  <br/>
+  <div class="row">
+    <div class="">
+      <form class="" action="{% url 'comment_create_view' %}" method="POST">
+        {% csrf_token %}
+        <!-- {{comment_form|crispy}} -->
+        <input type="hidden" name="move_id" value="{{move.id}}">
+        <input type="hidden" name="origin_path" value="{{request.get_full_path}}">
+        {% crispy comment_form comment_form.helper %} <!-- using form crispy helper in forms.py -->
+        <!-- <input type="submit" name="name" value="Comment"> -->
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="comments">
+      {% for comment in comments %}
+        <br>
+        <div class="">
+            {{comment.get_comment}} via <small>{{comment.user}}</small> </br>
+            {% if not comment.is_child %}
+              <ul>
+                {% for child in comment.get_children %}
+                  <li class="" style="padding-left: 20px;">
+                    {{child.get_comment}} via <small>{{child.user}}</small>
+                  </li>
+                {% endfor%}
+              </ul>
+              <a href="#" class="reply_btn">Reply</a> | <a href="{{comment.get_absolute_url}}">View</a><!-- do some jquery...
+              <!-- form to reply to comments -->
+              <div class="reply_comment" style="display: none;">
+                <form class="" action="{% url 'comment_create_view' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="move_id" value="{{move.id}}">
+                  <input type="hidden" name="origin_path" value="{{comment.get_origin}}">
+                  <input type="hidden" name="parent_id" value="{{comment.id}}">
+                  <!-- {{comment_form.as_p}} -->
+                  {% crispy comment_form comment_form.helper %}
+                  <!-- <input type="submit" name="reply" value="Reply"> -->
+                </form>
+              </div>
+            {% endif %}
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

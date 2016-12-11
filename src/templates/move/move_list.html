@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+<div class="" style="margin-top: 100px">
+  {% block content %}
+    {% for move in moves %}
+      <a href="{{move.get_absolute_url}}">{{move.title}}</a><br>
+      <a href="{{move.get_absolute_url}}"><img src="/media/{{move.move_type.get_image_url}}" alt="" class="img-responsive"/></a>
+      Previous Url = {{move.get_previous_url}} - <a href="{{ move.get_previous_url }}">Previous Move</a>
+      Next Url = {{move.get_next_url}} - <a href="{{ move.get_next_url }}">Next Move</a>
+      <br/>
+    {% endfor %}
+  {% endblock %}
+</div>

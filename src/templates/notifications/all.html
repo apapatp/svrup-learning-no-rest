@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <table>
+    {% for notification in notifications %}
+      <tr>
+        <td>
+          {{notification|safe}} {% if notification.read %} Read {% else %} Unread {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
