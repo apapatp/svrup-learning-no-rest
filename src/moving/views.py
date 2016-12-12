@@ -1,18 +1,24 @@
-from django.shortcuts import render, Http404, HttpResponseRedirect
+from django.shortcuts import render, Http404, HttpResponseRedirect, get_object_or_404
 from .models import Move, Type, TaggedItem
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from comments.forms import CommentForm
+from django.core.urlresolvers import reverse
 from comments.models import Comment
+from analytics.signals import page_view
 
 # Create your views here.
 @login_required()
 def move_single(request, cat_slug, slug):
+    # handle signal on particular move
+    cat = get_object_or_404(Type, slug=cat_slug)
+    move_obj = get_object_or_404(Move, slug=slug, move_type=cat)
+    page_view.send(request.user,page_path=request.get_full_path(),
+    primary_object=move_obj, secondary_object=cat)
     try:
         move_type = Type.objects.get(slug=cat_slug)
     except:
         raise Http404
-
 
     try:
         move = Move.objects.get(slug=slug)
@@ -38,11 +44,15 @@ def move_single(request, cat_slug, slug):
 
     print "Move is ", move.get_share_message()
     print "Move get prev ", move.get_next_url
-    # get all comments via ForeignKey
-    comments = move.comment_set.all()
-    c = {"move_type": move_type, "move": move, "comments": comments,
-     "comment_form": comment_form}
-    return render(request, "move/move_detail.html", c)
+    if request.user.is_member:
+        # get all comments via ForeignKey
+        comments = move.comment_set.all()
+        c = {"move_type": move_type, "move": move, "comments": comments,
+         "comment_form": comment_form}
+        return render(request, "move/move_detail.html", c)
+    else:
+        next_url = move_obj.get_absolute_url()
+        return HttpResponseRedirect("%s?next=%s" % (reverse('auth_login'), next_url))
 
 def move_list(request):
     queryset  = Move.objects.all()
@@ -57,18 +67,27 @@ def type_list(request):
     c = {"types": queryset}
     return render(request, "move/type_list.html", c)
 
-@login_required()
+# @login_required()
 def type_detail(request, cat_slug):
-    try:
-        move_type = Type.objects.get(slug=cat_slug)
-        move = Move.objects.all()
-    except:
-        raise Http404
+    types = get_object_or_404(Type, slug=cat_slug) # handle our query or show 404
+    moves_qs = types.move_set.all()
 
-    path = request.get_full_path()
-    comments = Comment.objects.filter(path=path)
-    c = {"move_type": move_type, "comments": comments}
-    return render(request, "move/type_detail.html", c)
+    page_view.send(request.user,page_path=request.get_full_path(),
+    primary_object=types)
+
+    return render(request, "move/type_detail.html", {"types": types,
+    "moves": moves_qs})
+
+    # try:
+    #     move_type = Type.objects.get(slug=cat_slug)
+    #     move = Move.objects.all()
+    # except:
+    #     raise Http404
+    #
+    # path = request.get_full_path()
+    # comments = Comment.objects.filter(path=path)
+    # c = {"move_type": move_type, "comments": comments}
+    # return render(request, "move/type_detail.html", c)
 
 # def move_single(request, id):
 #     try:

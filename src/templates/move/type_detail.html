@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  This is move {# move.get_absolute_url #} and type detail
+<div class="container" style="margin-top: 150px">
+  {% for move in move_qs %}
+    Order is {{move.order}} -
+    {% if request.user.is_authenticated %}
+      <a href="{{move.get_absolute_url}}">{{move}}</a>This is move {{ move.get_absolute_url }} and type detail
+    {% else %}
+      This is empty {{move}}
+    {% endif %}
+  {% endfor %}
+</div>
 {% endblock %}

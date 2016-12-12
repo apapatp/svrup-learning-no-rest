@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     # custom installed apps
     'accounts', # will store all user info
+    'analytics', # analytics
     'comments', # will store comments
     'moving', # should be video but doing it so that I know what pp is what when making maneuverbuddy
     'sort', # this is for sorting moves
@@ -114,6 +115,24 @@ USE_L10N = True
 
 USE_TZ = True
 
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
@@ -127,10 +146,15 @@ STATICFILES_DIRS = (
 
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "static_root")
 
-#Templates
+# Templates
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, "templates"),
 )
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "media")
+
+# braintree info
+# BRAINTREE_MERCHANT_ID ="3j27nwdw8mbvk68y"
+# BRAINTREE_PUBLIC_KEY = "64zrsxstnhykn4v2"
+# BRAINTREE_PRIVATE_KEY = "5507587264ea632357cad014f69ed78f"

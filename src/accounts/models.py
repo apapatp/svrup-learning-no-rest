@@ -1,5 +1,6 @@
 from django.db import models
-
+# signal for when user logs in and out
+from django.contrib.auth.signals import user_logged_out, user_logged_in
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import (
@@ -8,6 +9,7 @@ from django.contrib.auth.models import (
 from notifications.signals import notify
 # working with signals
 from django.db.models.signals import pre_save, post_save
+from django.utils import timezone
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email=None, date_of_birth=None, password=None):
@@ -44,6 +46,26 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+# membership
+class Membership(models.Model):
+    user = models.OneToOneField("MyUser")
+    date_end = models.DateTimeField(default=timezone.now())
+    date_start = models.DateTimeField(default=timezone.now())
+
+    def __unicode__(self):
+        return str(self.user.username)
+
+# create signal receiver function to do some kind of check when user logs in
+def user_logged_in_signal(sender, signal, request, user, **kwargs):
+    request.session.set_expiry(60000) # this is average session time, user gets logged out after
+    membership_object, created = Membership.objects.get_or_create(user=user)
+    if created:
+        membership_object.date_start = timezone.now()
+        membership_object.save()
+        user.is_member = True
+        user.save()
+
+user_logged_in.connect(user_logged_in_signal)
 
 class MyUser(AbstractBaseUser):
     # username = models.CharField(unique=True, max_length=255)

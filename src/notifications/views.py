@@ -27,7 +27,7 @@ def notifications_read(request, id):
             if next is not None:
                 return HttpResponseRedirect(next)
             else:
-                return HttpResponseRedirect(reverse("all_notifications") )
+                return HttpResponseRedirect( reverse("all_notifications") )
         else:
             raise Http404
     except:

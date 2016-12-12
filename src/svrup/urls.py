@@ -14,7 +14,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'svrup.views.home', name="home"),
-    url(r'^moves/', include('moving.urls')),
+    url(r'^moves/', include('moving.urls'))
     # url(r'^moves/', include('moving.urls')),
     # url(r'^$', TemplateView.as_view(template_name='base.html'), name='home'), # used for static tmplate
 )

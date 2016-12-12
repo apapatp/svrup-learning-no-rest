@@ -54,7 +54,7 @@ class NotificationManager(models.Manager):
 
 # Create your models here.
 class Notification(models.Model):
-    # ACTORE making the action happen
+    # ACTOR making the action happen
     sender_content_type = models.ForeignKey(ContentType, related_name="notify_sender")
     sender_object_id = models.PositiveIntegerField()
     sender_object = GenericForeignKey("sender_content_type", "sender_object_id") # this ties other fields together
