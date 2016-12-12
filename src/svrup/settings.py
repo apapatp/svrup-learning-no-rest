@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     # custom installed apps
     'accounts', # will store all user info
     'analytics', # analytics
+    'billing', 
     'comments', # will store comments
     'moving', # should be video but doing it so that I know what pp is what when making maneuverbuddy
     'sort', # this is for sorting moves

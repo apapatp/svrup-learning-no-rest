@@ -10,6 +10,7 @@ from notifications.signals import notify
 # working with signals
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
+from billing.models import Membership
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email=None, date_of_birth=None, password=None):
@@ -46,16 +47,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-# membership
-class Membership(models.Model):
-    user = models.OneToOneField("MyUser")
-    date_end = models.DateTimeField(default=timezone.now())
-    date_start = models.DateTimeField(default=timezone.now())
-
-    def __unicode__(self):
-        return str(self.user.username)
-
-# create signal receiver function to do some kind of check when user logs in
+# # create signal receiver function to do some kind of check when user logs in
 def user_logged_in_signal(sender, signal, request, user, **kwargs):
     request.session.set_expiry(60000) # this is average session time, user gets logged out after
     membership_object, created = Membership.objects.get_or_create(user=user)
@@ -64,6 +56,9 @@ def user_logged_in_signal(sender, signal, request, user, **kwargs):
         membership_object.save()
         user.is_member = True
         user.save()
+
+    # membership_object.update_membership_status()
+    user.membership.update_membership_status() # we casn do this because of the 1 to 1 field
 
 user_logged_in.connect(user_logged_in_signal)
 

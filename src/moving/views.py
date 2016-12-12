@@ -44,12 +44,17 @@ def move_single(request, cat_slug, slug):
 
     print "Move is ", move.get_share_message()
     print "Move get prev ", move.get_next_url
-    if request.user.is_member:
-        # get all comments via ForeignKey
-        comments = move.comment_set.all()
-        c = {"move_type": move_type, "move": move, "comments": comments,
-         "comment_form": comment_form}
-        return render(request, "move/move_detail.html", c)
+    if request.user.is_authenticated():
+        if request.user.is_member:
+            # get all comments via ForeignKey
+            comments = move.comment_set.all()
+            c = {"move_type": move_type, "move": move, "comments": comments,
+             "comment_form": comment_form}
+            return render(request, "move/move_detail.html", c)
+        else:
+            # TODO upgrade account
+            next_url = move_obj.get_absolute_url()
+            return HttpResponseRedirect("%s?next=%s" % (reverse('account_upgrade'), next_url))
     else:
         next_url = move_obj.get_absolute_url()
         return HttpResponseRedirect("%s?next=%s" % (reverse('auth_login'), next_url))

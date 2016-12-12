@@ -36,6 +36,10 @@ urlpatterns += patterns('accounts.views',
 )
 
 # extending url patterns to comment thread
+urlpatterns += patterns('billing.views',
+    url(r'^upgrade/$', 'account_upgrade', name="account_upgrade")
+)
+
 urlpatterns += patterns('comments.views',
     url(r'^comment/(?P<id>\d+)$', 'comment_thread', name="comment_thread"),
     url(r'^comment/create/$', 'comment_create_view', name="comment_create_view"),
