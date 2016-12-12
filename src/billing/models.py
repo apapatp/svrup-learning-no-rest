@@ -40,7 +40,7 @@ class TransactionManager(models.Manager):
             raise ValueError('Must complete a transaction to add new')
 
         # create a new order id with random gener and some id's
-        new_order_id = "%s%s%s" % (transaction_id[:2], random.randint(1,9), transaction_id[2:])
+        new_order_id = "%s%s%s" % (transaction_id[:2], random.randint(1,1289), transaction_id[2:])
 
         # create unsaved instance of the model
         new_trans = self.model(
@@ -65,7 +65,7 @@ class TransactionManager(models.Manager):
 class Transaction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     transaction_id = models.CharField(max_length=120) # from braintree or stripe
-    order_id = models.CharField(max_length=120) # for our transaction id different from stripe or braintree
+    order_id = models.CharField(max_length=120, unique=True) # for our transaction id different from stripe or braintree
     amount = models.DecimalField(max_digits=100, decimal_places=2)
     success = models.BooleanField(default=True)
     transaction_status=models.CharField(max_length=250, null=True, blank=True) # if fails
@@ -75,4 +75,7 @@ class Transaction(models.Model):
 
     objects = TransactionManager()
     def __unicode__(self):
-        return seld.order_id
+        return self.order_id
+
+    class Meta:
+        ordering = ['-timestamp']

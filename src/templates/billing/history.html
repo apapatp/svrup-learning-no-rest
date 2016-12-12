@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="margin-top: 100px">
+  <h4>Billing History</h4>
+  <table class="table">
+  {% for object in queryset %}
+    <tr>
+      <td>
+        {{object.order_id}}
+      </td>
+      <td>
+        {{object.amount}}
+      </td>
+      <td>
+        {{object.timestamp}}
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endblock %}
