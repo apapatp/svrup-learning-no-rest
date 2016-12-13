@@ -41,10 +41,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    # third_party
+    'braintree',
     # custom installed apps
     'accounts', # will store all user info
     'analytics', # analytics
-    'billing', 
+    'billing',
     'comments', # will store comments
     'moving', # should be video but doing it so that I know what pp is what when making maneuverbuddy
     'sort', # this is for sorting moves
@@ -156,6 +158,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "media")
 
 # braintree info
-# BRAINTREE_MERCHANT_ID ="3j27nwdw8mbvk68y"
-# BRAINTREE_PUBLIC_KEY = "64zrsxstnhykn4v2"
-# BRAINTREE_PRIVATE_KEY = "5507587264ea632357cad014f69ed78f"
+BRAINTREE_MERCHANT_ID ="b6gnm2bpx948sbgq"
+BRAINTREE_PUBLIC_KEY = "zph8ws6w2x9w3fbz"
+BRAINTREE_PRIVATE_KEY = "8a10e71bba21f8d23e483b5d34dacc03"

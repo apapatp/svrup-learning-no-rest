@@ -3,6 +3,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.db.models.signals import post_save
 import random
+from .signals import membership_dates
+import datetime
 
 # Create your models here.
 # membership
@@ -30,6 +32,22 @@ def update_account_membership_status(sender, instance, created, **kwargs):
 
 post_save.connect(update_account_membership_status, sender=Membership) # since we a re using post save, the signal needs to know which model is sending the signal
 
+# create signal to update membership
+def update_membership_dates(sender, new_date_start, **kwargs):
+    membership = sender
+    current_date_end = membership.date_end
+    if current_date_end > new_date_start:
+        # append new_start date plus offset to date end of the instance
+        membership.date_end = current_date_end + datetime.timedelta(days=30, hours=10) # add 30 days to the date
+        membership.save()
+    else:
+        # set a new start date and new end date with the same offset
+        membership.date_start = new_date_start
+        membership.date_end = new_date_start + datetime.timedelta(days=30, hours=10) # add 30 days to the date
+        membership.save()
+
+# connect singal all to function
+membership_dates.connect(update_membership_dates)
 
 class TransactionManager(models.Manager):
     def create_new(self, user, transaction_id, amount, card_type,
@@ -59,7 +77,7 @@ class TransactionManager(models.Manager):
             new_trans.last_four = last_four
 
         new_trans.save(using=self._db) # save
-        return new_trans.order_id
+        return new_trans
 
 # model to handle ccard and payment transaction
 class Transaction(models.Model):
