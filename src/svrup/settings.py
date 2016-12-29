@@ -158,6 +158,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "media")
 
 # braintree info
-BRAINTREE_MERCHANT_ID ="b6gnm2bpx948sbgq"
-BRAINTREE_PUBLIC_KEY = "zph8ws6w2x9w3fbz"
-BRAINTREE_PRIVATE_KEY = "8a10e71bba21f8d23e483b5d34dacc03"
+BRAINTREE_MERCHANT_ID = "dhq35s87242s9hfn" # "b6gnm2bpx948sbgq"
+BRAINTREE_PUBLIC_KEY = "kzc8nbt9b3vzxxcz" # "zph8ws6w2x9w3fbz"
+BRAINTREE_PRIVATE_KEY = "46fdc551f2429a6b3c176c97cb3bc5d0" # "8a10e71bba21f8d23e483b5d34dacc03"

@@ -1,6 +1,30 @@
 {% extends "base.html" %}
+
+<script>
+//for integration https://developers.braintreepayments.com/start/hello-client/javascript/v3
+  {% block jquery %}
+  // braintree.client.create({
+  //   authorization: 'CLIENT_AUTHORIZATION'
+  // }, function (err, clientInstance) {
+  //   braintree.hostedFields.create(/* ... */);
+  // });
+  braintree.setup("{{ client_token }}","dropin",{
+      container: "checkout",
+      form: "checkoutForm"
+  });
+
+  {% endblock %}
+</script>
 {% block content %}
 <div class="container" style="margin-top: 100px">
   <h4>Upgrade Account</h4>
+
+  <form class="form-control" action="." id="checkoutForm" method="post">
+    {% csrf_token %}
+    <div class="" id="checkout">
+
+    </div>
+    <input type="submit" name="" value="Complete Upgrade" class="btn btn-default">
+  </form>
 </div>
 {% endblock %}
