@@ -1,1 +1,5 @@
 static/
+migrations/*
+lib/
+include/
+bin/
